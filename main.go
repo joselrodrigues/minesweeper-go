@@ -96,6 +96,7 @@ type Game struct {
 	MinePositions map[Coordinates]bool
 	AudioManager  *AudioManager
 	Statistics    *GameStatistics
+	FirstClick    *Coordinates
 	Sprite        Sprite
 	Difficulty    GameDifficulty
 	State         GameState
@@ -115,6 +116,11 @@ type CellState struct {
 	isFlag        bool
 	isRevealed    bool
 	isMineClicked bool
+}
+
+type ClickEvent struct {
+	Position Coordinates
+	IsFirst  bool
 }
 
 type Sprite struct {
@@ -203,28 +209,28 @@ func NewGame(level DificultyLevel) (*Game, error) {
 		AudioManager:  audioManager,
 		State:         Playing,
 		Sprite:        sprite,
+		FirstClick:    nil,
 	}
 
 	// TODO: mabye shoudl handle error
-	game.InitializeBoard()
+	game.CreateBoard()
 
 	return game, nil
 }
 
-func (g *Game) InitializeBoard() {
-	// TODO: Implement Error handling
+func (g *Game) InitializeBoardState() {
 	g.GenerateMinePositions()
-	g.createBoard()
+	for pos := range g.Board {
+		g.CalculateMinesAround(pos)
+	}
 }
 
-func (g *Game) createBoard() {
+func (g *Game) CreateBoard() {
 	grid := g.Difficulty.GridDimensions
-
 	for x := 0; x < grid.Cols; x++ {
 		for y := 0; y < grid.Rows; y++ {
 			pos := Coordinates{X: x, Y: y}
-			g.CalculateMinesAround(pos)
-
+			g.Board[pos] = CellState{isMine: false, isFlag: false, isRevealed: false, minesAround: 0}
 		}
 	}
 }
@@ -254,8 +260,9 @@ func (g *Game) Restart() {
 	g.MinePositions = make(map[Coordinates]bool)
 	g.State = Playing
 	g.Statistics = &GameStatistics{StartTime: time.Now(), FlagsAvailable: g.Difficulty.NumberOfMines}
+	g.FirstClick = nil
 
-	g.InitializeBoard()
+	g.CreateBoard()
 
 	for _, player := range g.AudioManager.sounds {
 		player.Rewind()
@@ -375,8 +382,8 @@ func (g *Game) GenerateMinePositions() {
 		y := int(rnd.NormFloat64()*float64(grid.Rows)/spreadFactor +
 			float64(grid.Rows)*centerBias)
 		pos := Coordinates{X: x, Y: y}
-
-		if !g.isOutOfBounds(pos) && !mines[pos] {
+		isNotFirstClick := g.FirstClick == nil || pos != *g.FirstClick
+		if !g.isOutOfBounds(pos) && !mines[pos] && isNotFirstClick {
 			mines[pos] = true
 		}
 	}
@@ -424,6 +431,11 @@ func (g *Game) Update() error {
 
 		if !ok {
 			return nil
+		}
+
+		if g.FirstClick == nil {
+			g.FirstClick = &pos
+			g.InitializeBoardState()
 		}
 
 		cellState := g.Board[pos]
