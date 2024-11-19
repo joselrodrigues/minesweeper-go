@@ -1,0 +1,11 @@
+name: Minesweeper
+channels:
+  - apple
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - pip
+  - python=3.12
+  - pip:
+      - -r requirements.txt

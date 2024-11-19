@@ -1,0 +1,15 @@
+pandas
+numpy
+torchvision
+ipykernel
+tqdm
+scikit-learn
+regex
+matplotlib
+seaborn
+torch
+torchvision
+torchaudio
+optuna
+grpcio
+grpcio-tools

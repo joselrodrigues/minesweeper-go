@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package minesweeper;
+option go_package = "minesweeper/proto";
+
+service Minesweeper {
+  rpc MakeMove (Move) returns (GameState) {}
+  rpc Reset (Empty) returns (GameState) {}
+}
+
+message Move {
+  int32 x = 1;
+  int32 y = 2;
+  int32 action = 3; 
+}
+
+
+message Row {
+  repeated sint32 Cell = 1;
+}
+
+
+message GameState {
+  repeated Row Board = 1;
+  int32 State = 2;
+  int32 Reward = 3;
+} 
+
+message Empty {}

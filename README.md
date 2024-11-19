@@ -20,8 +20,8 @@ This is a simple Minesweeper project developed in Go using the Ebitengine graphi
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com:joselrodrigues/minesweeper-go.git
-   cd minesweeper-go
+   git clone https://github.com:joselrodrigues/minesweeper.git
+   cd minesweeper
    ```
 
 2. **Install dependencies**
