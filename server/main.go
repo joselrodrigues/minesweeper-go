@@ -56,15 +56,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go startGRPCServer(game)
+	startGRPCServer(game)
 
-	startEbitenWindow(game)
+	// startEbitenWindow(game)
 }
 
 func (s *gameServer) MakeMove(ctx context.Context, move *pb.Move) (*pb.GameState, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
+	// s.mu.Lock()
+	// defer s.mu.Unlock()
+	//
 	var action g.ActionEvent
 	switch move.Action {
 	case 0:
@@ -104,8 +104,8 @@ func (s *gameServer) MakeMove(ctx context.Context, move *pb.Move) (*pb.GameState
 }
 
 func (s *gameServer) Reset(ctx context.Context, _ *pb.Empty) (*pb.GameState, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	// s.mu.Lock()
+	// defer s.mu.Unlock()
 	s.game.Restart()
 
 	modelState := s.game.ModelState()

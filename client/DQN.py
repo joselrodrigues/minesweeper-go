@@ -269,7 +269,7 @@ def train(num_episodes=50000):
     agent = DQNAgent()
 
     for episode in range(num_episodes):
-        state = env.reset()  # Necesitarías implementar reset también
+        state = env.reset()
         episode_reward = 0
         done = False
 
